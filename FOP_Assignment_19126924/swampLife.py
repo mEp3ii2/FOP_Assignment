@@ -137,18 +137,17 @@ def search(cList,fList):
     fcords =()
     for j in range(len(cList)):
         for i in range(len(fList)):
-            fcords = fList[i].getPos()
-            if cList[j].inRange(fList[i])==True:
+            if cList[j].inRange(fList[i].getPos())==True:
                 cList[j].Hunt(fList[i].getPos())
             else:
                 moveCrt(cList[j],(XMAX,YMAX))
-
+        
 def main():
     
     ducks = []
     newts = []
     shrimps = []
-
+    food = []
     #  create ducks
     for i in range(5):
         createCreature(ducks,"Duck")
@@ -174,7 +173,7 @@ def main():
         
         search(ducks,newts)
         search(newts,shrimps)
-        moveCrt(shrimps,(XMAX,YMAX))
+        search(shrimps,food)
 
         plotDuck(ducks)
         plotNewts(newts)
