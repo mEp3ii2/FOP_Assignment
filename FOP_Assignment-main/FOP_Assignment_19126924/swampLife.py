@@ -24,10 +24,10 @@ def plotDuck(dList):
     yvalues = []
     sizes = []
     for d in dList:
-        #print(d)
-        xvalues.append(d.getPos()[0])
-        yvalues.append(d.getPos()[1])
-        sizes.append(d.getSize())
+            #print(d)
+            xvalues.append(d.getPos()[0])
+            yvalues.append(d.getPos()[1])
+            sizes.append(d.getSize())
     
     plt.scatter(xvalues, yvalues, s=sizes, color="orange")
 
@@ -36,10 +36,10 @@ def plotNewts(nList):
     yvalues = []
     sizes = []
     for n in nList:
-        #print(d)
-        xvalues.append(n.getPos()[0])
-        yvalues.append(n.getPos()[1])
-        sizes.append(n.getSize())
+            #print(d)
+            xvalues.append(n.getPos()[0])
+            yvalues.append(n.getPos()[1])
+            sizes.append(n.getSize())
     
     plt.scatter(xvalues, yvalues, s=sizes, color="green")
 
@@ -48,10 +48,10 @@ def plotShrimp(sList):
     yvalues = []
     sizes = []
     for s in sList:
-        #print(d)
-        xvalues.append(s.getPos()[0])
-        yvalues.append(s.getPos()[1])
-        sizes.append(s.getSize())
+            #print(d)
+            xvalues.append(s.getPos()[0])
+            yvalues.append(s.getPos()[1])
+            sizes.append(s.getSize())
     
     plt.scatter(xvalues, yvalues, s=sizes, color="orange")
 
@@ -61,29 +61,12 @@ def moveCrt(objList,limits):
 
     for o in objList:
         while(True):
-            xy =o.super().getPos()
             o.stepChange()
-            x = xy[0]
-            y = xy[1]
-            if x < limits[0] and x > 0:
-                if y < limits[1] and y >0:
-                    break
-            x = xy[0]
-            y = xy[1]
-	    		
+
 def terrainload():
     print(b)
     terrain = open('terrain.txt')
 
-def createCreature(creatures,species):
-    randX = random.randint(0,XMAX)
-    randY = random.randint(0,YMAX)
-    if species == 'Duck':
-        creatures.append(Duck([randX,randY]))
-    elif species == 'Newt':
-        creatures.append(Newt([randX,randY]))
-    elif species == 'Shrimp':
-        creatures.append(Shrimp([randX,randY]))
 def main():
     
     ducks = []
@@ -92,15 +75,24 @@ def main():
 
     #  create ducks
     for i in range(5):
-        createCreature(ducks,"Duck")
+        randX = random.randint(0,XMAX)
+        randY = random.randint(0,YMAX)
+        ducks.append(Duck([randX,randY]))
+        print(ducks[i])
      
     # create newts 
     for i in range(10):
-        createCreature(newts,"Newts")
+        randX = random.randint(0,XMAX)
+        randY = random.randint(0,YMAX)
+        newts.append(Newt([randX,randY]))
+        print(newts[i])
     
     #create shrimps
     for i in range(10):
-        createCreature(shrimps,"Shrimp")
+        randX = random.randint(0,XMAX)
+        randY = random.randint(0,YMAX)
+        shrimps.append(Shrimp([randX,randY]))
+        print(shrimps[i])
      
      
     #simulte for ten timesteps 
@@ -108,10 +100,6 @@ def main():
         print("\n ### TIMESTEP ",i, "###")
         plt.xlim(0,XMAX)
         plt.ylim(0,YMAX)
-        
-        for j in range(len(ducks)):
-            if ducks[j].repoduction() == True:
-                createCreature(ducks,"Duck")
         
         moveCrt(ducks,(XMAX,YMAX))
         moveCrt(newts,(XMAX,YMAX))
@@ -121,6 +109,9 @@ def main():
         plotNewts(newts)
         plotShrimp(shrimps)
 
+        
+        
+       
         plt.pause(1)
         plt.clf()
 

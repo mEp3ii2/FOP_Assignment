@@ -9,7 +9,9 @@
 # 01/09/2022 – Base version for assignment
 #
 
+from turtle import pos
 import Movement as mv
+
 class Animal():
 
     myclass = 'Animal'
@@ -19,7 +21,9 @@ class Animal():
     
     def __str__(self):
         return self.state + " @ " + str(self.pos)
-    
+    def getState(self):
+        return self.state
+
     def getSize(m):
         return 10
     
@@ -31,6 +35,28 @@ class Animal():
         self.pos[0] -= xmov
         self.pos[1] -= ymov
     
+    def repoduction(self):
+        if self.age == 5:
+            return True
+
+    def deathCheck(self):
+        if self.age == 10:
+            return True
+    
+    def getPos(self):
+        return self.pos
+     
+    def inRange(self, pos):
+        wCords = self.getPos()
+        wXmin = wCords[0]-50
+        wXmax = wCords[0]+50
+        wYmin = wCords[1]-50
+        wYmax = wCords[1]+50   
+        if wXmin<= pos[0] and pos[0] <= wXmax:
+            if wYmin<=pos[1] and pos[1] <=wYmax:
+                return True
+    def Hunt(self, pos):
+        print("on the hunt")
 #duck class
 class Duck(Animal):
     time2hatch = 4
@@ -39,9 +65,12 @@ class Duck(Animal):
     #duck init
     def __init__(self, pos):
         self.pos = pos
-        self.state = self.states[0]
         self.age = 0
-    
+        self.state = self.states[0]
+
+    def __str__(self):
+       super().__init__(self)
+
     #increases age of duck
     #check if ready to hatch
     #
@@ -68,18 +97,8 @@ class Newt(Animal):
 
     state = "newt"
 
-    def __str__(self):
-        return self.state + " @ " + str(self.pos)
-    
-    
-                        
-    
-
 class Shrimp(Animal):
 
     state = "shrimp"
 
-    def __str__(self):
-        return self.state + " @ " + str(self.pos)
-    
                         
