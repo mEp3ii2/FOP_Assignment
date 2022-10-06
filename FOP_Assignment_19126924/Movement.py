@@ -1,7 +1,7 @@
 import random as rn
 import numpy as np 
 
-def Movement():
+def Movement(speed):
     xmove=rn.randint(-10,10)
     ymove=rn.randint(-10,10)
     moves=(xmove,ymove)

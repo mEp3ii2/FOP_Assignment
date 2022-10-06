@@ -9,6 +9,7 @@
 # 01/09/2022 – Base version for assignment
 #
 
+from multiprocessing import popen_fork
 import random
 #from turtle import color
 import matplotlib.pyplot as plt
@@ -139,9 +140,25 @@ def search(cList,fList):
         for i in range(len(fList)):
             if cList[j].inRange(fList[i].getPos())==True:
                 cList[j].Hunt(fList[i].getPos())
+                print(cList[j], " is on the hunt")
+                cPos = cList[j].getPos()
+                pPos = fList[i].getPos()
+                xDiff = abs(cPos[0]-pPos[0])
+                yDiff = abs(cPos[1]-pPos[1])
+                if xDiff == 0 or xDiff == 1:
+                    if yDiff == 0 or yDiff == 1:
+                        #call remover code
+                        print("hi")
+                        remover(fList[i],fList)
+
             else:
                 moveCrt(cList[j],(XMAX,YMAX))
-        
+
+def remover(creature,clist):
+    index = clist.index(creature)
+    print(creature, " has been slain")
+    del clist[index]
+
 def main():
     
     ducks = []
@@ -170,10 +187,15 @@ def main():
         for j in range(len(ducks)):
             if ducks[j].repoduction() == True:
                 createCreature(ducks,"Duck")
-        
         search(ducks,newts)
         search(newts,shrimps)
         search(shrimps,food)
+#        for i in range(len(ducks)):
+#            moveCrt(ducks[i],(XMAX, YMAX))
+#        for i in range(len(newts)):
+#            moveCrt(newts[i],(XMAX, YMAX))
+#        for i in range(len(shrimps)):
+#            moveCrt(shrimps[i],(XMAX, YMAX))
 
         plotDuck(ducks)
         plotNewts(newts)

@@ -22,7 +22,9 @@ class Animal():
         self.speed = 10
     
     def __str__(self):
-        return self.state + " @ " + str(self.pos)
+        pos = (self.xpos,self.ypos)
+        return self.state + " @ " + str(pos)
+        
 
     def getState(self):
         return self.state
@@ -39,11 +41,12 @@ class Animal():
     
     def stepChange(self):
         self.age += 1
-        moves = mv.Movement()
+        self.speed = self.speed - self.age
+        moves = mv.Movement(self.speed)
         xmov = moves[0]
         ymov = moves[1]
-        self.xpos = xmov
-        self.ypos = ymov
+        self.xpos += xmov
+        self.ypos += ymov
     
     def repoduction(self):
         if self.age == 5:
@@ -65,10 +68,14 @@ class Animal():
         if wXmin<= cpos[0] and cpos[0] <= wXmax:
             if wYmin<= cpos[1] and cpos[1] <=wYmax:
                 return True
-    
+    def getSpeed(self):
+        return self.speed
+
     def Hunt(self, Ppos):
-        for i in range(self.speed):
-            self.pos=mv.hunt(self.pos,Ppos)
+        for i in range(self.speed*2):
+            point =mv.hunt((self.xpos,self.ypos),Ppos)
+            self.xpos = point[0]
+            self.ypos = point[1]
 
 #duck class
 class Duck(Animal):
@@ -78,14 +85,17 @@ class Duck(Animal):
     
     #duck init
     def __init__(self, pos):
-        self.pos = pos
+        self.xpos = pos[0]
+        self.ypos = pos[1]
         self.age = 0
         self.speed = 11
         self.state = self.states[0]
 
     def __str__(self):
-       super().__init__(self)
-       
+        pos = (self.xpos,self.ypos)
+        return self.state + " @ " + str(pos)
+    def getPos(self):
+        return(self.xpos, self.ypos) 
     def inRange(self, cpos):
         wCords = self.getPos()
         wXmin = wCords[0]-50
@@ -101,15 +111,16 @@ class Duck(Animal):
     #
     def stepChange(self):
         self.age += 1
+        self.speed = self.speed - self.age
         if self.state == "egg":
             if self.age > self.time2hatch:
                 self.state = "adult"
         else:
-            moves = mv.Movement()
+            moves = mv.Movement(self.speed)
             xmov = moves[0]
             ymov = moves[1]
-            self.xpos = xmov
-            self.ypos = ymov
+            self.xpos += xmov
+            self.ypos += ymov
                         
     def getSize(m):
         if m.state == "egg":
