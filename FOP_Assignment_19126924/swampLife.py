@@ -138,21 +138,28 @@ def search(cList,fList):
     fcords =()
     for j in range(len(cList)):
         for i in range(len(fList)):
-            if cList[j].inRange(fList[i].getPos())==True:
-                cList[j].Hunt(fList[i].getPos())
-                print(cList[j], " is on the hunt")
-                cPos = cList[j].getPos()
-                pPos = fList[i].getPos()
-                xDiff = abs(cPos[0]-pPos[0])
-                yDiff = abs(cPos[1]-pPos[1])
-                if xDiff == 0 or xDiff == 1:
-                    if yDiff == 0 or yDiff == 1:
-                        #call remover code
-                        print("hi")
-                        remover(fList[i],fList)
+            dist=[]
+            cPos = cList[j].getPos()
+            pPos = fList[i].getPos()
+            dist.append(abs((pPos[0]-cPos[0])+(pPos[1]-cPos[1])))
+            closest = min(dist)
+            clstInd= dist.index(closest)
+        if closest >= 105:
+            pursue(cList[j],fList[clstInd],fList)
+        else:
+            moveCrt(cList[j],(XMAX,YMAX))
 
-            else:
-                moveCrt(cList[j],(XMAX,YMAX))
+def pursue(hunter, prey,preyList):
+    pPos = prey.getPos()
+    hunter.Hunt(pPos)
+    hPos = hunter.getPos()
+    pPos = prey.getPos()
+    dist = abs((pPos[0]-cPos[0])+(pPos[1]-cPos[1]))
+    if dist == 1 or dist == 0:
+        if prey.getSpec() == 'Newt':
+            remover(prey,preyList)
+        elif prey.getSpec() == 'Shrimp':
+            remover(prey,preyList)
 
 def remover(creature,clist):
     index = clist.index(creature)

@@ -61,10 +61,10 @@ class Animal():
      
     def inRange(self, cpos):
         wCords = self.getPos()
-        wXmin = wCords[0]-50
-        wXmax = wCords[0]+50
-        wYmin = wCords[1]-50
-        wYmax = wCords[1]+50   
+        wXmin = wCords[0]-75
+        wXmax = wCords[0]+75
+        wYmin = wCords[1]-75
+        wYmax = wCords[1]+75   
         if wXmin<= cpos[0] and cpos[0] <= wXmax:
             if wYmin<= cpos[1] and cpos[1] <=wYmax:
                 return True
@@ -76,13 +76,15 @@ class Animal():
             point =mv.hunt((self.xpos,self.ypos),Ppos)
             self.xpos = point[0]
             self.ypos = point[1]
+    def getSpec(self):
+        return species
 
 #duck class
 class Duck(Animal):
 
     time2hatch = 4
     states = ["egg","adult"]
-    
+    species = "Duck"
     #duck init
     def __init__(self, pos):
         self.xpos = pos[0]
@@ -131,7 +133,7 @@ class Duck(Animal):
 
 class Newt(Animal):
 
-    state = "newt"
+    species = "newt"
     
     def __init__(self, pos):
         self.xpos = pos[0]
@@ -142,7 +144,7 @@ class Newt(Animal):
         return(self.xpos, self.ypos)
 
 class Shrimp(Animal):
-    state = "shrimp"
+    species = "shrimp"
     
     def __init__(self, pos):
         self.xpos = pos[0]
