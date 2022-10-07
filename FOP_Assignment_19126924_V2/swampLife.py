@@ -136,29 +136,50 @@ def createCreature(creatures,species):
 
 def search(cList,fList):
     fcords =()
+    dist =[]
     for j in range(len(cList)):
+        dist=[]
         for i in range(len(fList)):
-            dist=[]
             cPos = cList[j].getPos()
             pPos = fList[i].getPos()
             dist.append(abs((pPos[0]-cPos[0])+(pPos[1]-cPos[1])))
+
+        if len(dist):
             closest = min(dist)
             clstInd= dist.index(closest)
-        if closest >= 105:
-            pursue(cList[j],fList[clstInd],fList)
+            print("debug time")
+            print("closest is : ", closest)
+            print(clstInd)
+            print("heres the list")
+            for p in range(len(dist)):
+                print(dist[p])
+            print("end list print")
+            print(fList[clstInd])
+            if closest <= 200:
+                pursue(cList[j],fList[clstInd],fList)
+            else:
+                moveCrt(cList[j],(XMAX,YMAX))
         else:
             moveCrt(cList[j],(XMAX,YMAX))
 
 def pursue(hunter, prey,preyList):
     pPos = prey.getPos()
+    print(hunter)
+    print("target position : ", prey.getPos())
     hunter.Hunt(pPos)
+    print("fin position : ", hunter.getPos())
     hPos = hunter.getPos()
     pPos = prey.getPos()
-    dist = abs((pPos[0]-cPos[0])+(pPos[1]-cPos[1]))
+    dist =(abs(pPos[0]-hPos[0]))+(abs((pPos[1]-hPos[1])))
+    print(dist)
+    dist - abs(dist)
+    print("V2:",dist)
     if dist == 1 or dist == 0:
         if prey.getSpec() == 'Newt':
+            print("Hunter at : ", hPos, " moves in for the kill")
             remover(prey,preyList)
         elif prey.getSpec() == 'Shrimp':
+            print("Hunter at :",hPos, " moves in for the kill")
             remover(prey,preyList)
 
 def remover(creature,clist):
@@ -191,6 +212,13 @@ def main():
         plt.xlim(0,XMAX)
         plt.ylim(0,YMAX)
         
+        for i in range(len(ducks)):
+            print(ducks[i])
+        for i in range(len(newts)):
+            print(newts[i])
+        for i in range(len(shrimps)):
+            print(shrimps[i])
+        print("")
         for j in range(len(ducks)):
             if ducks[j].repoduction() == True:
                 createCreature(ducks,"Duck")
@@ -209,13 +237,14 @@ def main():
         plotShrimp(shrimps)
 
         for i in range(len(ducks)):
-            plt.annotate(ducks[i].getState(),ducks[i].getPos())
+            plt.annotate(ducks[i].getSpec(),ducks[i].getPos())
         for i in range(len(newts)):
-            plt.annotate(newts[i].getState(),newts[i].getPos())
+            plt.annotate(newts[i].getSpec(),newts[i].getPos())
         for i in range(len(shrimps)):
-            plt.annotate(shrimps[i].getState(),shrimps[i].getPos())
-        plt.pause(1)
+            plt.annotate(shrimps[i].getSpec(),shrimps[i].getPos())
+        plt.pause(3)
         plt.clf()
+
 
     
 if __name__ == "__main__":

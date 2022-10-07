@@ -14,16 +14,17 @@ import Movement as mv
 
 class Animal():
 
-    myclass = 'Animal'
+    
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
         self.speed = 10
-    
+        self.species = 'Animal'
+            
     def __str__(self):
         pos = (self.xpos,self.ypos)
-        return self.state + " @ " + str(pos)
+        return self.species + " @ " + str(pos)
         
 
     def getState(self):
@@ -76,8 +77,9 @@ class Animal():
             point =mv.hunt((self.xpos,self.ypos),Ppos)
             self.xpos = point[0]
             self.ypos = point[1]
+
     def getSpec(self):
-        return species
+        return self.species
 
 #duck class
 class Duck(Animal):
@@ -90,7 +92,7 @@ class Duck(Animal):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
-        self.speed = 11
+        self.speed = 40
         self.state = self.states[0]
 
     def __str__(self):
@@ -133,24 +135,27 @@ class Duck(Animal):
 
 class Newt(Animal):
 
-    species = "newt"
+    species = "Newt"
     
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
-        self.speed = 10
+        self.speed = 35
+        self.species = 'Newt'
+        
     def getPos(self):
         return(self.xpos, self.ypos)
 
 class Shrimp(Animal):
-    species = "shrimp"
+    species = "Shrimp"
     
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
-        self.speed = 11
+        self.speed = 30
+        self.species = 'Shrimp'
     
     def getPos(self):
         return(self.xpos, self.ypos)
