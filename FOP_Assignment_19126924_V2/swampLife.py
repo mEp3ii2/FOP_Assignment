@@ -9,87 +9,68 @@
 # 01/09/2022 – Base version for assignment
 #
 
+from hashlib import new
 from multiprocessing import popen_fork
 from pydoc import cli
 import random as rn
-#from turtle import title
-#from turtle import color
+from numpy import random
 import matplotlib.pyplot as plt
 import numpy as np
-#import time
 from swamp import Duck, Newt, Shrimp
-import terrainCreator as tc
 import food
-terrain = tc.creatMap()
+import pandas as pd
+from matplotlib.colors import ListedColormap
+import csv
+
 
 XMAX = 1000
 YMAX = 1000
-b = np.zeros((XMAX,YMAX))
+
+
+
+
+def createTerrain():
+    map = random.randint(2, size=(XMAX,YMAX))
+    return map
+
+def getTerrain():
+    map = random.randint(2, size=(XMAX,YMAX))
+    
+    with open("map.csv","w",newline='') as file:
+        mywriter = csv.writer(file, delimiter=',')
+        mywriter.writerows(map)
+    return map
 
 def plotTerrain(map):
-    #rock = 1
-    # shallows = 2,3
-    # deepWater = 4 
-    # land = 5
-    rocks=[]
-    shallows=[]
-    deepWater=[]
-    lans=[]
-    xvalues = []
-    yvalues = []
-    
-    for i in range(1000):
-        for j in range(1000):
-            if map[i][j]== 1:
-                xvalues.append(map[i])
-                yvalues.append(map[j])
-    plt.scatter(xvalues,yvalues, color='gray')
+    map = pd.read_csv('map.csv')
+    cmap = ListedColormap(["green","lightblue"])
+    plt.imshow(map,cmap=cmap) 
 
-    for i in range(1000):
-        for j in range(1000):
-            if map[i][j]== 2 or map[i][j]==3:
-                xvalues.append(map[i])
-                yvalues.append(map[j])
-    plt.scatter(xvalues,yvalues, color='lightblue')
-    
-    for i in range(1000):
-        for j in range(1000):
-            if map[i][j]== 4:
-                xvalues.append(map[i])
-                yvalues.append(map[j])
-    plt.scatter(xvalues,yvalues, color='darkBlue')
-    
-    for i in range(1000):
-        for j in range(1000):
-            if map[i][j]== 5:
-                xvalues.append(map[i])
-                yvalues.append(map[j])
-    plt.scatter(xvalues,yvalues, color='brown')
-    
 #plots ducks           
 def plotDuck(dList):
     xvalues = []
     yvalues = []
     sizes = []
     for d in dList:
-        #print(d)
+        
         xvalues.append(d.getPos()[0])
         yvalues.append(d.getPos()[1])
         sizes.append(d.getSize())
     
-    plt.scatter(xvalues, yvalues, s=sizes, color="blue")
+    plt.scatter(xvalues, yvalues, s=sizes, color="yellow")
+
 # plots newts
 def plotNewts(nList):
     xvalues = []
     yvalues = []
     sizes = []
     for n in nList:
-        #print(d)
+        
         xvalues.append(n.getPos()[0])
         yvalues.append(n.getPos()[1])
         sizes.append(n.getSize())
     
-    plt.scatter(xvalues, yvalues, s=sizes, color="green")
+    plt.scatter(xvalues, yvalues, s=sizes, color="pink")
 
 # plots shrimps
 def plotShrimp(sList):
@@ -97,7 +78,7 @@ def plotShrimp(sList):
     yvalues = []
     sizes = []
     for s in sList:
-        #print(d)
+        
         xvalues.append(s.getPos()[0])
         yvalues.append(s.getPos()[1])
         sizes.append(s.getSize())
@@ -108,12 +89,12 @@ def plotFood(fList):
     yvalues = []
     sizes = []
     for f in fList:
-        #print(d)
+        
         xvalues.append(f.getPos()[0])
         yvalues.append(f.getPos()[1])
         sizes.append(2)
     
-    plt.scatter(xvalues, yvalues, s=sizes, color="purple")
+    plt.scatter(xvalues, yvalues, s=sizes, color="orange")
 
 # moves creatures and ensures
 # they say within the plot range
@@ -133,7 +114,6 @@ def moveCrt(creature,limits):
         y = xy[1]
             
 def terrainload():
-    print(b)
     terrain = open('terrain.txt')
 
 def createCreature(creatures,species):
@@ -183,6 +163,7 @@ def search(cList,fList):
     for j in range(len(cList)):
         if cList[j].getState()!='egg':
             dist=[]
+            
             for i in range(len(fList)):
                 cPos = cList[j].getPos()
                 pPos = fList[i].getPos()
@@ -190,13 +171,15 @@ def search(cList,fList):
             if len(dist):
                 closest = min(dist)
                 clstInd= dist.index(closest)
-                print(fList[clstInd])
                 if closest <= 200:
+                    "Print target located"
                     pursue(cList[j],fList[clstInd],fList)
                     cList[j].ageUp()
                 else:
+                    
                     moveCrt(cList[j],(XMAX,YMAX))
             else:
+               
                 moveCrt(cList[j],(XMAX,YMAX))
         else:
             cList[j].ageUp()
@@ -206,13 +189,17 @@ def search(cList,fList):
 # prey creature and will kill
 # if in range
 def pursue(hunter, prey,preyList):
+    
     hPos = hunter.getPos()
     pPos = prey.getPos()
-    dist =(abs(pPos[0]-hPos[0]))+(abs((pPos[1]-hPos[1])))
+    hunter.Hunt(pPos)
+    dist =(abs(pPos[0]-hPos[0]))+(abs(pPos[1]-hPos[1]))
     if dist == 1 or dist == 0:
+        print("Hunter at :",hPos, " moves in for the kill")
+        print("")
         remover(prey,preyList)
-        #print("Hunter at :",hPos, " moves in for the kill")
-            
+        
+    
 
 # removes creature from
 # there list
@@ -220,15 +207,20 @@ def remover(creature,clist):
     index = clist.index(creature)
     print(creature, " has been slain")
     del clist[index]
+    
 
-def deathCheck(creatures):
-    deathList =()
+def deathCheck(creatures,foodList):
+    deathList =[]
     for i in range (len(creatures)):
         if creatures[i].deathCheck()== True:
             deathList.append(i)
     for creature in deathList[::-1]:
         print(creatures[creature],"has been passed away")
+        corpseFood(creatures[creature].getPos(),foodList)
         del creatures[creature]
+    
+def corpseFood(pos,nectar):
+    nectar.append(food.Food((pos[0],pos[1])))
 def fillFood(nectar):
     foodamount = rn.randint(1,6)
     for i in range(foodamount):
@@ -242,34 +234,51 @@ def main():
     newts = []
     shrimps = []
     food = []
+
+    duckAmount = int(input("How many ducks woud you like? "))
+    newtAmount = int(input("How many newts woud you like? "))
+    shrimpAmount = int(input("How many shrimp woud you like? "))
+    time = int(input("How long would you like the simulation to last? "))
+    global XMAX 
+    XMAX= int(input("What would you like the x boundary to be? "))
+    global YMAX 
+    YMAX= int(input("What would you like the y boundary to be? "))
     #  create ducks
-    for i in range(5):
+    for i in range(duckAmount):
         createCreature(ducks,"Duck")
      
     # create newts 
-    for i in range(10):
+    for i in range(newtAmount):
         createCreature(newts,"Newt")
     
     #create shrimps
-    for i in range(10):
+    for i in range(shrimpAmount):
         createCreature(shrimps,"Shrimp")
+    
     fillFood(food)
-     
+    terrain = getTerrain()
+    
     #simulte for ten timesteps 
-    for w in range(10):
+    for w in range(time):
+        plotTerrain(terrain)
         print("\n ### TIMESTEP ",w, "###")
         plt.xlim(0,XMAX)
         plt.ylim(0,YMAX)
         
         for i in range(len(ducks)):
             print(ducks[i])
+
         for q in range(len(newts)):
             print(newts[q])
+
         for b in range(len(shrimps)):
             print(shrimps[b])
+
         print("")
         
-
+        deathCheck(ducks,food)
+        deathCheck(newts,food)
+        deathCheck(shrimps,food)
         repoduction(ducks)
         repoduction(newts)
         repoduction(shrimps)
@@ -289,27 +298,33 @@ def main():
         plotNewts(newts)
         plotShrimp(shrimps)
         plotFood(food)
-
-        for i in range(len(ducks)):
-            title = ducks[i].getSpec(),ducks[i].getState()
-            plt.annotate(title,ducks[i].getPos())
-        for i in range(len(newts)):
-            plt.annotate(newts[i].getSpec(),newts[i].getPos())
-        for i in range(len(shrimps)):
-            plt.annotate(shrimps[i].getSpec(),shrimps[i].getPos())
         plotTitle = "### TimeStep ",w, " Ducks: ", len(ducks), " Newts: ", len(newts)," Shrimp: ", len(shrimps)," ###"
-
-        plt.title(plotTitle) 
-        plt.pause(3)
+        plt.title(plotTitle)
+        title2 = "Swamp"+str(w)
+        
+        plt.savefig(title2+".png")
+        plt.pause(1)
         plt.clf()
 
         print("Duck ages")
         for i in range(len(ducks)):
             print(ducks[i].getAge())
+        
 
+''' for i in range(len(ducks)):
+            title = ducks[i].getSpec(),ducks[i].getState()
+            plt.annotate(title,ducks[i].getPos())
+
+        for i in range(len(newts)):
+            plt.annotate(newts[i].getSpec(),newts[i].getPos())
+
+        for i in range(len(shrimps)):
+            plt.annotate(shrimps[i].getSpec(),shrimps[i].getPos()) '''
+
+        
 
     
 if __name__ == "__main__":
-    print("\nShe turned me into a newt!\n")
+    print("\nWelcome to the shit show!\n")
     main()
-    print("\nI got better!\n")
+    print("\nThat hurt!\n")
