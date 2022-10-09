@@ -10,14 +10,16 @@
 #
 
 from multiprocessing import popen_fork
-import random
+from pydoc import cli
+import random as rn
+#from turtle import title
 #from turtle import color
 import matplotlib.pyplot as plt
 import numpy as np
 #import time
 from swamp import Duck, Newt, Shrimp
 import terrainCreator as tc
-
+import food
 terrain = tc.creatMap()
 
 XMAX = 1000
@@ -64,7 +66,7 @@ def plotTerrain(map):
                 yvalues.append(map[j])
     plt.scatter(xvalues,yvalues, color='brown')
     
-            
+#plots ducks           
 def plotDuck(dList):
     xvalues = []
     yvalues = []
@@ -76,7 +78,7 @@ def plotDuck(dList):
         sizes.append(d.getSize())
     
     plt.scatter(xvalues, yvalues, s=sizes, color="blue")
-
+# plots newts
 def plotNewts(nList):
     xvalues = []
     yvalues = []
@@ -89,6 +91,7 @@ def plotNewts(nList):
     
     plt.scatter(xvalues, yvalues, s=sizes, color="green")
 
+# plots shrimps
 def plotShrimp(sList):
     xvalues = []
     yvalues = []
@@ -100,7 +103,20 @@ def plotShrimp(sList):
         sizes.append(s.getSize())
     
     plt.scatter(xvalues, yvalues, s=sizes, color="red")
+def plotFood(fList):
+    xvalues = []
+    yvalues = []
+    sizes = []
+    for f in fList:
+        #print(d)
+        xvalues.append(f.getPos()[0])
+        yvalues.append(f.getPos()[1])
+        sizes.append(2)
+    
+    plt.scatter(xvalues, yvalues, s=sizes, color="purple")
 
+# moves creatures and ensures
+# they say within the plot range
 def moveCrt(creature,limits):
     x=0
     y=0
@@ -121,8 +137,8 @@ def terrainload():
     terrain = open('terrain.txt')
 
 def createCreature(creatures,species):
-    randX = random.randint(0,XMAX)
-    randY = random.randint(0,YMAX)
+    randX = rn.randint(0,XMAX)
+    randY = rn.randint(0,YMAX)
     if species == 'Duck':
         creatures.append(Duck([randX,randY]))
     elif species == 'Newt':
@@ -131,61 +147,94 @@ def createCreature(creatures,species):
         creatures.append(Shrimp([randX,randY]))
 
 # will add func to make is so new egg
-# spawns next to parrent and not random
-# def eggLay():
+# spawns next to parent and not random
+def eggLay(ducks,pos):
+    for i in range(len(ducks)):
+        newX = None
+        newY = None
+        randX = rn.randint(1,2)
+        randY = rn.randint(1,2)
+        
+        if randX == 1:
+            newX=pos[0]-1
+        else:
+            newX=pos[0]+1
 
+        if randY == 1:
+            newY=pos[1]-1
+        else:
+            newY=pos[1]+1
+        ducks.append(Duck([newX,newY]))
+
+# create new animals if 
+# parent is 5 timesteps old        
+def repoduction(creatures):
+    for i in range(len(creatures)):
+        if creatures[i].repoduction()== True:
+            createCreature(creatures,creatures[i].getSpec())
+
+# searches to see if any creatures
+# are nearby 
+# will call pursue funcion if yes
+# otherwise will rand move
 def search(cList,fList):
     fcords =()
     dist =[]
     for j in range(len(cList)):
-        dist=[]
-        for i in range(len(fList)):
-            cPos = cList[j].getPos()
-            pPos = fList[i].getPos()
-            dist.append(abs((pPos[0]-cPos[0])+(pPos[1]-cPos[1])))
-
-        if len(dist):
-            closest = min(dist)
-            clstInd= dist.index(closest)
-            print("debug time")
-            print("closest is : ", closest)
-            print(clstInd)
-            print("heres the list")
-            for p in range(len(dist)):
-                print(dist[p])
-            print("end list print")
-            print(fList[clstInd])
-            if closest <= 200:
-                pursue(cList[j],fList[clstInd],fList)
+        if cList[j].getState()!='egg':
+            dist=[]
+            for i in range(len(fList)):
+                cPos = cList[j].getPos()
+                pPos = fList[i].getPos()
+                dist.append(abs((pPos[0]-cPos[0])+(pPos[1]-cPos[1])))
+            if len(dist):
+                closest = min(dist)
+                clstInd= dist.index(closest)
+                print(fList[clstInd])
+                if closest <= 200:
+                    pursue(cList[j],fList[clstInd],fList)
+                    cList[j].ageUp()
+                else:
+                    moveCrt(cList[j],(XMAX,YMAX))
             else:
                 moveCrt(cList[j],(XMAX,YMAX))
         else:
-            moveCrt(cList[j],(XMAX,YMAX))
+            cList[j].ageUp()
+            cList[j].ageCheck()
 
+# move hunter creature towards
+# prey creature and will kill
+# if in range
 def pursue(hunter, prey,preyList):
-    pPos = prey.getPos()
-    print(hunter)
-    print("target position : ", prey.getPos())
-    hunter.Hunt(pPos)
-    print("fin position : ", hunter.getPos())
     hPos = hunter.getPos()
     pPos = prey.getPos()
     dist =(abs(pPos[0]-hPos[0]))+(abs((pPos[1]-hPos[1])))
-    print(dist)
-    dist - abs(dist)
-    print("V2:",dist)
     if dist == 1 or dist == 0:
-        if prey.getSpec() == 'Newt':
-            print("Hunter at : ", hPos, " moves in for the kill")
-            remover(prey,preyList)
-        elif prey.getSpec() == 'Shrimp':
-            print("Hunter at :",hPos, " moves in for the kill")
-            remover(prey,preyList)
+        remover(prey,preyList)
+        #print("Hunter at :",hPos, " moves in for the kill")
+            
 
+# removes creature from
+# there list
 def remover(creature,clist):
     index = clist.index(creature)
     print(creature, " has been slain")
     del clist[index]
+
+def deathCheck(creatures):
+    deathList =()
+    for i in range (len(creatures)):
+        if creatures[i].deathCheck()== True:
+            deathList.append(i)
+    for creature in deathList[::-1]:
+        print(creatures[creature],"has been passed away")
+        del creatures[creature]
+def fillFood(nectar):
+    foodamount = rn.randint(1,6)
+    for i in range(foodamount):
+        randX = rn.randint(0,XMAX)
+        randY = rn.randint(0, YMAX)
+        nectar.append(food.Food((randX,randY)))
 
 def main():
     
@@ -204,27 +253,31 @@ def main():
     #create shrimps
     for i in range(10):
         createCreature(shrimps,"Shrimp")
-     
+    fillFood(food)
      
     #simulte for ten timesteps 
-    for i in range(10):
-        print("\n ### TIMESTEP ",i, "###")
+    for w in range(10):
+        print("\n ### TIMESTEP ",w, "###")
         plt.xlim(0,XMAX)
         plt.ylim(0,YMAX)
         
         for i in range(len(ducks)):
             print(ducks[i])
-        for i in range(len(newts)):
-            print(newts[i])
-        for i in range(len(shrimps)):
-            print(shrimps[i])
+        for q in range(len(newts)):
+            print(newts[q])
+        for b in range(len(shrimps)):
+            print(shrimps[b])
         print("")
-        for j in range(len(ducks)):
-            if ducks[j].repoduction() == True:
-                createCreature(ducks,"Duck")
+        
+
+        repoduction(ducks)
+        repoduction(newts)
+        repoduction(shrimps)
+
         search(ducks,newts)
         search(newts,shrimps)
         search(shrimps,food)
+        
 #        for i in range(len(ducks)):
 #            moveCrt(ducks[i],(XMAX, YMAX))
 #        for i in range(len(newts)):
@@ -235,15 +288,24 @@ def main():
         plotDuck(ducks)
         plotNewts(newts)
         plotShrimp(shrimps)
+        plotFood(food)
 
         for i in range(len(ducks)):
-            plt.annotate(ducks[i].getSpec(),ducks[i].getPos())
+            title = ducks[i].getSpec(),ducks[i].getState()
+            plt.annotate(title,ducks[i].getPos())
         for i in range(len(newts)):
             plt.annotate(newts[i].getSpec(),newts[i].getPos())
         for i in range(len(shrimps)):
             plt.annotate(shrimps[i].getSpec(),shrimps[i].getPos())
+        plotTitle = "### TimeStep ",w, " Ducks: ", len(ducks), " Newts: ", len(newts)," Shrimp: ", len(shrimps)," ###"
+
+        plt.title(plotTitle) 
         plt.pause(3)
         plt.clf()
+
+        print("Duck ages")
+        for i in range(len(ducks)):
+            print(ducks[i].getAge())
 
 
     

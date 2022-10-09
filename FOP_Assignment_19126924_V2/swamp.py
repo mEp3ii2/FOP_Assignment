@@ -11,6 +11,7 @@
 
 #from turtle import pos
 import Movement as mv
+import random as rn
 
 class Animal():
 
@@ -32,11 +33,15 @@ class Animal():
     
     def getPos(self):
         return(self.xpos, self.ypos)
-    
+
+    def ageUp(self):
+        self.age +=1
+
     def setPos(self,pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
-
+    def getAge(self):
+        return self.age
     def getSize(m):
         return 10
     
@@ -54,6 +59,11 @@ class Animal():
             return True
 
     def deathCheck(self):
+        if self.age == 6:
+            deathchance = rn.randint(0,100)
+            deathchance = self.age*2 + deathchance
+            if deathchance >= 100:
+                return True
         if self.age == 10:
             return True
     
@@ -125,18 +135,22 @@ class Duck(Animal):
             ymov = moves[1]
             self.xpos += xmov
             self.ypos += ymov
-                        
+    def ageCheck(self):
+        if self.age > self.time2hatch:
+            self.state = "adult"
+                 
     def getSize(m):
         if m.state == "egg":
             size = 5
         else:
             size = 15
         return size
-
+    def getState(self):
+        return super().getState()
 class Newt(Animal):
 
     species = "Newt"
-    
+    state = 'Newt'
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
@@ -149,7 +163,7 @@ class Newt(Animal):
 
 class Shrimp(Animal):
     species = "Shrimp"
-    
+    state = "Shrimp"
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]

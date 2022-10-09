@@ -8,14 +8,29 @@ def Movement(speed):
     return moves
 
 def hunt(hpos,ppos):
-    distances =[]
+
     hx = hpos[0]
     hy= hpos[1]
     px = ppos[0]       
     py = ppos[1]
-
+    
+    if hx > px:
+        hx=hx-1
+    elif hx < px:
+        hx=hx+1
+    else:
+        pass
+    if hy > py:
+        hy=hy-1
+    elif hy < py:
+        hy=hy+1
+    else:
+        pass
+    
+    point =(hx,hy)
+    return point
     # for i in range(3)
-    dist = abs((px-(hx-1))+(py-(hy+1)))
+    '''dist = abs((px-(hx-1))+(py-(hy+1)))
     distances.append(dist) #0
 
     dist = abs((px-(hx))+(py-(hy+1)))
@@ -58,4 +73,4 @@ def hunt(hpos,ppos):
         point =(hx+1,hy-1)   #6
     
     
-    return point
+    return point'''
