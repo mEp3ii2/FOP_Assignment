@@ -11,19 +11,21 @@
 
 #from turtle import pos
 import Movement as mv
+import random as rn
 
 class Animal():
 
-    myclass = 'Animal'
+    
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
         self.speed = 10
-    
+        self.species = 'Animal'
+            
     def __str__(self):
         pos = (self.xpos,self.ypos)
-        return self.state + " @ " + str(pos)
+        return self.species + " @ " + str(pos)
         
 
     def getState(self):
@@ -31,11 +33,15 @@ class Animal():
     
     def getPos(self):
         return(self.xpos, self.ypos)
-    
+
+    def ageUp(self):
+        self.age +=1
+
     def setPos(self,pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
-
+    def getAge(self):
+        return self.age
     def getSize(m):
         return 10
     
@@ -53,6 +59,11 @@ class Animal():
             return True
 
     def deathCheck(self):
+        if self.age == 6:
+            deathchance = rn.randint(0,100)
+            deathchance = self.age*2 + deathchance
+            if deathchance >= 100:
+                return True
         if self.age == 10:
             return True
     
@@ -76,8 +87,9 @@ class Animal():
             point =mv.hunt((self.xpos,self.ypos),Ppos)
             self.xpos = point[0]
             self.ypos = point[1]
+
     def getSpec(self):
-        return species
+        return self.species
 
 #duck class
 class Duck(Animal):
@@ -90,7 +102,7 @@ class Duck(Animal):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
-        self.speed = 11
+        self.speed = 40
         self.state = self.states[0]
 
     def __str__(self):
@@ -123,34 +135,41 @@ class Duck(Animal):
             ymov = moves[1]
             self.xpos += xmov
             self.ypos += ymov
-                        
+    def ageCheck(self):
+        if self.age > self.time2hatch:
+            self.state = "adult"
+                 
     def getSize(m):
         if m.state == "egg":
             size = 5
         else:
             size = 15
         return size
-
+    def getState(self):
+        return super().getState()
 class Newt(Animal):
 
-    species = "newt"
-    
+    species = "Newt"
+    state = 'Newt'
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
-        self.speed = 10
+        self.speed = 35
+        self.species = 'Newt'
+        
     def getPos(self):
         return(self.xpos, self.ypos)
 
 class Shrimp(Animal):
-    species = "shrimp"
-    
+    species = "Shrimp"
+    state = "Shrimp"
     def __init__(self, pos):
         self.xpos = pos[0]
         self.ypos = pos[1]
         self.age = 0
-        self.speed = 11
+        self.speed = 30
+        self.species = 'Shrimp'
     
     def getPos(self):
         return(self.xpos, self.ypos)
